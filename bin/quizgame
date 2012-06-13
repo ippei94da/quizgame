@@ -30,6 +30,9 @@
 
 require "pp"
 require "optparse"
+
+require "rubygems"
+gem     "quizgame"
 require "quizgame/quizgame.rb"
 require "quizgame/problem.rb"
 
