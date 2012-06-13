@@ -1,0 +1,62 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+
+
+#クイズを実行する。
+# quizgame quiz.yaml
+# データファイル quiz.yaml を引数で指定。
+# デフォルトでは 10問実行。
+#
+# quizgame -n 20 quiz.yaml
+#   問題数を 20問に変更。
+#
+# quizuame -c quiz.yaml
+#   問題数ではなく、正解数が規定に達するまで続けるモード。
+#
+# quiz.yaml と同じディレクトリに quiz_weight.yaml を生成し、
+# ここに優先度を記録する。
+#
+# quiz.yaml format
+#   requirement: "全体に共通する問題文。e.g., 英単語に直せ。"
+#   problems:
+#     p20120228a: # 問題 ID
+#     - "1"       # 問題文
+#     - "one"     # 解答
+#     - "いち"    # 回答後の補足説明
+#     p20120228b:
+#     - "2"
+#     - "two"
+#     - "に"
+
+require "pp"
+require "optparse"
+require "quizgame/quizgame.rb"
+require "quizgame/problem.rb"
+
+# option analysis
+#default value
+OPTIONS = { :norma => 10 }
+op = OptionParser.new
+op.on("-n num", "--norma=number", "Set number of norma."){ |val|
+  OPTIONS[:norma] = val.to_i }
+op.parse!(ARGV)
+
+unless ARGV.size == 1
+  puts "No quiz file indicated. Exit."
+  exit
+end
+
+data = YAML.load_file(ARGV[0])
+#pp data
+requirement = data["requirement"]
+problems = {}
+data["problems"].each do |id, ary|
+  problems[id] = Problem.new(*ary)
+end
+picker = WeightedPicker.new(ARGV[0].sub(/\.yaml$/, "_wts.yaml"), problems.keys)
+
+#pp requirement
+#pp problems
+#pp picker
+game = QuizGame.new(requirement, problems, picker)
+game.run(OPTIONS[:norma])

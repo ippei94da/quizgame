@@ -1,0 +1,16 @@
+--- 
+requirement: Answer the result.
+
+problems: 
+  p20120613a:
+    - 3-2
+    - "1"
+    - supplement1
+  p20120613b:
+    - 4-2
+    - "2"
+    - supplement2
+  p20120613c:
+    - 1*3
+    - "3"
+    - supplement3
