@@ -16,7 +16,8 @@
 # quiz.yaml と同じディレクトリに quiz_weight.yaml を生成し、
 # ここに優先度を記録する。
 #
-# quiz.yaml format
+# quiz.yaml format:
+#   # see example/*.yaml
 #   requirement: "全体に共通する問題文。e.g., 英単語に直せ。"
 #   problems:
 #     p20120228a: # 問題 ID
@@ -50,16 +51,19 @@ unless ARGV.size == 1
 end
 
 data = YAML.load_file(ARGV[0])
-#pp data
 requirement = data["requirement"]
 problems = {}
 data["problems"].each do |id, ary|
   problems[id] = Problem.new(*ary)
 end
-picker = WeightedPicker.new(ARGV[0].sub(/\.yaml$/, "_wts.yaml"), problems.keys)
+weight_yaml = ARGV[0].sub(/\.yaml$/, "_wts.yaml")
+begin
+  picker = WeightedPicker.new(weight_yaml, problems.keys)
+rescue WeightedPicker::InvalidWeightError
+  puts "Error!"
+  puts "#{weight_yaml} contains float weight. Use integers as weights."
+  exit
+end
 
-#pp requirement
-#pp problems
-#pp picker
 game = QuizGame.new(requirement, problems, picker)
 game.run(OPTIONS[:norma])
