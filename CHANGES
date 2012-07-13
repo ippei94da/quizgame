@@ -1,5 +1,8 @@
-== Master (for 0.0.1)
+== Master (for 0.0.2)
   bin/quizgame raise error when _wts.yaml includes a float weight.
+
+== Version 0.0.1
+  bugfix
 
 == Version 0.0.0
   initiali release.
