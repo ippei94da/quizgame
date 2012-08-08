@@ -77,7 +77,12 @@ class QuizGame
 
     printf("result: [%d correct / %d problems]",
         correct_count, problem_count)
-    printf("  %2d\%\n", (correct_count.to_f/ problem_count*100).to_i)
+
+    begin
+      printf("  %2d\%\n", (correct_count.to_f/ problem_count*100).to_i)
+    rescue FloatDomainError
+      puts "  No problem is answered."
+    end
 
     print "Time: ", Time.now - start_time, "\n"
   end
