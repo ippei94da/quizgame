@@ -57,13 +57,6 @@ data["problems"].each do |id, ary|
   problems[id] = Problem.new(*ary)
 end
 weight_yaml = ARGV[0].sub(/\.yaml$/, "_wts.yaml")
-begin
-  picker = WeightedPicker.new(weight_yaml, problems.keys)
-rescue WeightedPicker::InvalidWeightError
-  puts "Error!"
-  puts "#{weight_yaml} contains float weight. Use integers as weights."
-  exit
-end
 
-game = QuizGame.new(requirement, problems, picker)
+game = QuizGame.new(requirement, problems, weight_yaml)
 game.run(OPTIONS[:norma])

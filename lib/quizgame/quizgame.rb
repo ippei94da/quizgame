@@ -24,15 +24,28 @@ class QuizGame
   class QuizGame::NoQuizError < Exception; end
 
   # クイズデータを読み込む。
-  def initialize(requirement, problems, picker)
+  def initialize(requirement, problems, picker_file)
     @requirement = requirement
     @problems    = problems
-    @picker      = picker
+    @weight_file = picker_file
   end
 
   # 条件を満たすまでクイズを実行。
   # norma は終了条件の数
   def run(norma)
+    begin
+      picker = WeightedPicker.load_file @weight_file
+      picker.merge @problems.keys
+    rescue WeightedPicker::InvalidWeightError
+      puts "Error!"
+      puts "#{@weight_file} contains float weight. Use integers as weights."
+      exit
+    rescue Errno::ENOENT
+      #puts "TEST"
+      picker = WeightedPicker.new({})
+      picker.merge @problems.keys
+    end
+
     correct_count = 0
     problem_count = 0
     show_statement(norma)
@@ -41,7 +54,7 @@ class QuizGame
     start_time = Time.new
 
     while (problem_count < norma )
-      id = @picker.pick
+      id = picker.pick
       problem = @problems[id]
 
       puts "-"*60
@@ -55,9 +68,9 @@ class QuizGame
       problem_count += 1
       if problem.correct?(input_str)
         correct_count += 1
-        @picker.lighten(id)
+        picker.lighten(id)
       else
-        @picker.weigh(id)
+        picker.weigh(id)
       end
 
       puts show_result(problem, input_str)
@@ -68,6 +81,8 @@ class QuizGame
       printf( "[%d correct / %d problems / %d norma]\n",
         correct_count, problem_count, norma)
     end
+
+    File.open(@weight_file, "w"){|io| picker.dump(io) }
 
     puts "="*60
     sleep(0.35) #Visual effect. A little stop before showing results.

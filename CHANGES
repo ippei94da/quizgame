@@ -3,6 +3,7 @@
 == Master (for 0.0.2)
   bin/quizgame raise error when _wts.yaml includes a float weight.
   fix the bug when NaN occur with quit when no problem is answered.
+  Adjust to WeightedPicker-0.1.0.
 
 == Version 0.0.1
   bugfix

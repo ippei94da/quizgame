@@ -23,8 +23,7 @@ class TC_QuizGame < Test::Unit::TestCase
       "p1" => Problem.new( "1", "one", "いち" ),
       "p2" => Problem.new( "2", "two", "に" )
     }
-    wp = WeightedPicker.new(QUIZ_FILE, ["p1", "p2"])
-    @qg00 = QuizGame.new(requirement, problems, wp)
+    @qg00 = QuizGame.new(requirement, problems, QUIZ_FILE)
   end
 
   def teardown
